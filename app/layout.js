@@ -1,3 +1,6 @@
+import Header from "@/app/components/Header";
+import "./globals.css";
+
 export const metadata = {
   title: "Civil AI",
   description: "Chat with the TXDot Spec Manual",
@@ -6,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="font-light font-roboto">
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
