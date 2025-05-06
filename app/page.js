@@ -3,7 +3,7 @@ import Button from "@/app/components/Button";
 
 export default function Home() {
   return (
-    <div className="bg-black text-white h-100 flex flex-col items-left justify-center px-20">
+    <div className="bg-black text-white h-150 flex flex-col items-left justify-center px-20">
       <div className="flex">
         <div className="w-24 h-24 mr-2 border-r-4">
           <PaigeSVG />
