@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AiMessage from "@/app/components/messages/AiMessage";
 import UserMessage from "@/app/components/messages/UserMessage";
+import PdfViewer from "@/app/components/PdfViewer";
 
 const Demo = () => {
   const [qry, setQry] = useState("");
@@ -49,7 +50,10 @@ const Demo = () => {
 
   return (
     <div className="w-full h-[calc(100vh-4rem)] flex">
-      <div className="h-full w-1/2 border-r-1 border-black">PDF goes here</div>
+      <div className="h-full w-1/2 border-r-1 border-black">
+        {/* FUTURE: PDF's will all be stored in AWS, need to include URL in env file */}
+        <PdfViewer fileUrl={"/pdf/spec-book-0924.pdf"} />
+      </div>
       <div className="h-full w-1/2 flex flex-col text-sm items-center">
         <div className="w-full h-10 sticky top-16">
           <div className="text-lg font-normal p-2 pt-1">Chat</div>
