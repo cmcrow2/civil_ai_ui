@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import AiMessage from "@/app/components/messages/AiMessage";
 import UserMessage from "@/app/components/messages/UserMessage";
+import ThinkingDots from "@/app/components/messages/ThinkingDots";
 import PdfViewer from "@/app/components/PdfViewer";
 
 const Demo = () => {
@@ -14,6 +15,15 @@ const Demo = () => {
         "Hello! I am Paige. I see you want to ask me some questions about the Texas Department of Transportation Specifications Manual. How can I help?",
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,8 +33,12 @@ const Demo = () => {
 
     setQry("");
 
+    setIsLoading(true);
+
     const aiMessage = await qryAi(qry);
     setMessages((prev) => [...prev, aiMessage]);
+
+    setIsLoading(false);
   };
 
   const qryAi = async (query) => {
@@ -59,14 +73,21 @@ const Demo = () => {
           <div className="text-lg font-normal p-2 pt-1">Chat</div>
         </div>
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-scroll p-8 pt-0 w-180">
+        <div className="flex-1 overflow-y-scroll p-8 pt-0 w-[90%]">
           {messages.map((msg, index) => {
+            const isLast = index === messages.length - 1 && msg.type === "user";
             return msg.type === "ai" ? (
               <AiMessage key={index} text={msg.content} />
             ) : (
-              <UserMessage key={index} text={msg.content} />
+              <UserMessage
+                key={index}
+                text={msg.content}
+                messagesEndRef={messagesEndRef}
+                isLast={isLast}
+              />
             );
           })}
+          {isLoading && <ThinkingDots />}
         </div>
 
         {/* Sticky footer/header at bottom */}
