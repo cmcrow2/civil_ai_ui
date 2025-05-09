@@ -11,7 +11,7 @@ const AiMessage = ({ text }) => {
         src="logo.svg"
         className="pt-2"
       />
-      <div className="inline-block px-2 py-2 max-w-[80%] prose">
+      <div className="inline-block px-2 py-2 max-w-[80%] prose text-sm">
         <ReactMarkdown>{text}</ReactMarkdown>
       </div>
     </div>
