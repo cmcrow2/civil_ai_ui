@@ -8,13 +8,7 @@ import PdfViewer from "@/app/components/PdfViewer";
 
 const Demo = () => {
   const [qry, setQry] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      type: "ai",
-      content:
-        "Hello! I am Paige. I see you want to ask me some questions about the Texas Department of Transportation Specifications Manual. How can I help?",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
@@ -24,6 +18,23 @@ const Demo = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const timer = setTimeout(() => {
+      setMessages([
+        {
+          type: "ai",
+          content:
+            "Hello! I am Paige. I see you want to ask me some questions about the Texas Department of Transportation Specifications Manual. How can I help?",
+        },
+      ]);
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,27 +84,30 @@ const Demo = () => {
           <div className="text-lg font-normal p-2 pt-1">Chat</div>
         </div>
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-scroll p-8 pt-0 w-[90%]">
-          {messages.map((msg, index) => {
-            const isLast = index === messages.length - 1 && msg.type === "user";
-            return msg.type === "ai" ? (
-              <AiMessage key={index} text={msg.content} />
-            ) : (
-              <UserMessage
-                key={index}
-                text={msg.content}
-                messagesEndRef={messagesEndRef}
-                isLast={isLast}
-              />
-            );
-          })}
-          {isLoading && <ThinkingDots />}
+        <div className="flex-1 overflow-y-scroll p-8 pt-0 w-full">
+          <div className="w-[90%] max-w-4xl mx-auto">
+            {messages.map((msg, index) => {
+              const isLast =
+                index === messages.length - 1 && msg.type === "user";
+              return msg.type === "ai" ? (
+                <AiMessage key={index} text={msg.content} />
+              ) : (
+                <UserMessage
+                  key={index}
+                  text={msg.content}
+                  messagesEndRef={messagesEndRef}
+                  isLast={isLast}
+                />
+              );
+            })}
+            {isLoading && <ThinkingDots />}
+          </div>
         </div>
 
         {/* Sticky footer/header at bottom */}
         <form
           onSubmit={handleSubmit}
-          className="w-full h-14 sticky bottom-0 z-10 flex items-center justify-center gap-x-4 px-8"
+          className="w-[90%] max-w-4xl h-14 sticky bottom-0 z-10 flex items-center justify-center gap-x-4 px-8"
         >
           <input
             type="text"
@@ -102,7 +116,7 @@ const Demo = () => {
             placeholder="Ask Paige..."
             className="border-red border-1 rounded-2xl w-full h-8 shadow-md px-4 focus:outline-none focus:ring-0"
           ></input>
-          <button type="submit">
+          <button type="submit" disabled={isLoading || qry === ""}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
