@@ -27,26 +27,26 @@ const Demo = () => {
         {
           type: "ai",
           content:
-            "Hello! I am Paige. I see you want to ask me some questions about the Texas Department of Transportation Specifications Manual. How can I help?",
+            "Hello! I am Paige. I am currently under construction, but am happy to assist you in any way I can! Below are a few questions you can ask.",
         },
       ]);
       setIsLoading(false);
-    }, 1000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, question) => {
     e.preventDefault();
 
-    const userMessage = { type: "user", content: qry };
+    const userMessage = { type: "user", content: question || qry };
     setMessages((prev) => [...prev, userMessage]);
 
     setQry("");
 
     setIsLoading(true);
 
-    const aiMessage = await qryAi(qry);
+    const aiMessage = await qryAi(question || qry);
     setMessages((prev) => [...prev, aiMessage]);
 
     setIsLoading(false);
@@ -62,14 +62,20 @@ const Demo = () => {
         body: JSON.stringify({ qry: query }),
       });
 
-      if (!res.ok) throw new Error("Something went wrong.");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Something went wrong.");
+      }
 
       const data = await res.json();
-      const aiMessage = { type: "ai", content: data };
-
-      return aiMessage;
+      return { type: "ai", content: data };
     } catch (err) {
-      console.error(err);
+      console.error("Fetch failed:", err);
+      return {
+        type: "ai",
+        content:
+          "Sorry, Paige is currently unavailable. Please try again shortly.",
+      };
     }
   };
 
@@ -87,10 +93,16 @@ const Demo = () => {
         <div className="flex-1 overflow-y-scroll p-8 pt-0 w-full">
           <div className="w-[90%] max-w-4xl mx-auto">
             {messages.map((msg, index) => {
+              const isFirst = index === 0 && msg.type === "ai";
               const isLast =
                 index === messages.length - 1 && msg.type === "user";
               return msg.type === "ai" ? (
-                <AiMessage key={index} text={msg.content} />
+                <AiMessage
+                  key={index}
+                  text={msg.content}
+                  isFirst={isFirst}
+                  handleSubmit={handleSubmit}
+                />
               ) : (
                 <UserMessage
                   key={index}
