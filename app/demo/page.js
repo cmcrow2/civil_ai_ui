@@ -46,10 +46,7 @@ const Demo = () => {
 
     setIsLoading(true);
 
-    const aiMessage = await qryAi(question || qry);
-    setMessages((prev) => [...prev, aiMessage]);
-
-    setIsLoading(false);
+    await qryAi(question || qry);
   };
 
   const qryAi = async (query) => {
@@ -62,13 +59,36 @@ const Demo = () => {
         body: JSON.stringify({ qry: query }),
       });
 
-      if (!res.ok) {
+      if (!res.ok || !res.body) {
         const errorText = await res.text();
         throw new Error(errorText || "Something went wrong.");
       }
 
-      const data = await res.json();
-      return { type: "ai", content: data };
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let result = ""; // Store the full response incrementally
+
+      // Start loading
+      setIsLoading(false);
+
+      // Add an empty "ai" message first
+      setMessages((prev) => [...prev, { type: "ai", content: "" }]);
+
+      // Read the stream incrementally
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        // Decode the chunk into a string
+        const chunk = decoder.decode(value, { stream: true });
+        result += chunk; // Append the new chunk to the result
+
+        // Update the content of the most recent AI message after 500ms
+        setTimeout(() => {
+          console.log("Running!");
+          updateMostRecentMessage(result);
+        }, 500);
+      }
     } catch (err) {
       console.error("Fetch failed:", err);
       return {
@@ -77,6 +97,24 @@ const Demo = () => {
           "Sorry, Paige is currently unavailable. Please try again shortly.",
       };
     }
+  };
+
+  const updateMostRecentMessage = (newContent) => {
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages];
+
+      // Find the most recent message of type 'ai' (the one with empty content initially)
+      const mostRecentIndex = updatedMessages.findLastIndex(
+        (msg) => msg.type === "ai" && msg.content === ""
+      );
+
+      // Update the most recent message's content
+      if (mostRecentIndex !== -1) {
+        updatedMessages[mostRecentIndex].content = newContent; // Set the content to the accumulated message
+      }
+
+      return updatedMessages;
+    });
   };
 
   return (
