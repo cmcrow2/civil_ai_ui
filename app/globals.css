@@ -1,15 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@font-face {
-  font-family: "Montserrat";
-  src: url("/Montserrat-VariableFont_wght.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
 @theme {
-  /* --color-white: #fffcf9; */
+  --color-white: #fffefc;
+  /* --color-white: #f9f3e8; */
   --color-black: #222222;
   --color-black-100: #7a7a7a;
   --color-black-200: #707070;
@@ -30,10 +25,12 @@
   --color-red-700: #a6192e;
   --color-red-800: #a0182c;
   --color-red-900: #8e1527;
+  --color-safety: #ffc94d;
+  --color-gray: #e6e1dc;
+  --color-pine: #188c7e;
   --font-roboto: "Roboto", sans-serif;
-  --font-montserrat: "Montserrat, serif";
-  --font-ptmono: "PT Mono", "serif";
-  /* --font-london: "London", serif; */
+  --font-merriweather: "Merriweather", serif;
+  --font-exo: "Exo 2", sans-serif;
   --animate-bounce-dot: bounceDot 1.4s ease-in-out infinite;
 }
 

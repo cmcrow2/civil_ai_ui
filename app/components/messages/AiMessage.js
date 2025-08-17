@@ -1,5 +1,6 @@
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const AiMessage = ({ text, isFirst, handleSubmit }) => {
   const sampleQuestions = [
@@ -24,7 +25,9 @@ const AiMessage = ({ text, isFirst, handleSubmit }) => {
           className="mt-2"
         />
         <div className="inline-block px-2 py-2 prose text-sm my-auto">
-          <ReactMarkdown>{text}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {text.replace(/\\n/g, "  \n")}
+          </ReactMarkdown>
         </div>
       </div>
       <div className="pb-2">
